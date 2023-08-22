@@ -1,46 +1,47 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import san from './img/san.jpg'
-import ysz from './img/ysz.jpg'
-import love from './img/love.gif'
+import React, { useState } from 'react'
+import Homepage from './Homepage'
+import History from './History'
+import Works from './Works'
+import './App.css'
 
 export default function App() {
-  const [hitokoto, setHitokoto] = useState('')
+    const pages = ['首页', '经历', '作品']
+    const [curPage, setCurPage] = useState(0)
 
-  useEffect(() => {
-    axios({
-      url: 'https://v1.hitokoto.cn',
-      method: 'get',
-      params: {
-        c: 'a'
-      }
-    }).then(res =>
-      setHitokoto(`${res.data.hitokoto} \n\t\t\t\t\t\t\t--《${res.data.from}》`)
+    const which = () => {
+        switch (curPage) {
+            case 0:
+                return <Homepage />;
+            case 1:
+                return <History />;
+            case 2:
+                return <Works />;
+            default:
+                return null;
+        }
+    }
+
+    const handleClick = (index) => {
+        setCurPage(index)
+    }
+
+    return (
+        <div>
+            {which()}
+
+            <ul>
+                {pages.map(
+                    (item, index) =>
+                        <li
+                            key={index}
+                            className={index == curPage ? 'active' : ''}
+                            onClick={() => handleClick(index)}
+                        >
+                            {item}
+                        </li>
+                )}
+            </ul>
+
+        </div>
     )
-  }, [])
-
-  const handleClick = () => {
-    axios({
-      url: 'https://v1.hitokoto.cn',
-      method: 'get',
-      params: {
-        c: 'a'
-      }
-    }).then(res =>
-      setHitokoto(`${res.data.hitokoto} \n\t\t\t\t\t\t\t--《${res.data.from}》`)
-    )
-  }
-
-  return (
-    <div>
-      <div style={{ whiteSpace: 'pre', marginTop: 100, display: 'flex', justifyContent: 'center' , fontSize:40}}>
-        {hitokoto}
-      </div>
-      <div style={{ marginTop: 100, display: 'flex', justifyContent: 'center' }}>
-        <img src={ysz} style={{ width: 400, height: 400 }} />
-        <img src={love} style={{ width: 400, height: 400 }} onClick={handleClick}/>
-        <img src={san} style={{ width: 400, height: 400 }} />
-      </div>
-    </div>
-  )
 }
